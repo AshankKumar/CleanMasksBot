@@ -1,36 +1,19 @@
 # bot.py
 import os
 import random
-import discord
-from dotenv import load_dotenv
 
-intents = discord.Intents.default()
-intents.members = True
+from discord.ext import commands
+from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix='!')
 
 
-@client.event
-async def on_ready():
-    print(f'{client.user.name} has connected to Discord!')
-
-
-@client.event
-async def on_member_join(member):
-    await member.create_dm()
-    await member.dm_channel.send(
-        f'Hi {member.name}, welcome to my Discord server!'
-    )
-
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-
+@bot.command(name='99')
+@commands.dm_only()
+async def nine_nine(ctx):
     brooklyn_99_quotes = [
         'I\'m the human form of the 💯 emoji.',
         'Bingpot!',
@@ -40,8 +23,15 @@ async def on_message(message):
         ),
     ]
 
-    if message.content == '99!':
-        response = random.choice(brooklyn_99_quotes)
-        await message.channel.send(response)
+    response = random.choice(brooklyn_99_quotes)
+    await ctx.send(response)
 
-client.run(TOKEN)
+
+@bot.event
+async def on_command_error(ctx, exception):
+    if isinstance(exception, commands.PrivateMessageOnly):
+        # Do nothing on this error to avoid spamming non-dm channels
+        pass
+        # await ctx.send("DM me this command to use it.")
+
+bot.run(TOKEN)
