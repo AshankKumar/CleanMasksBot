@@ -22,9 +22,15 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
+
+    bot_commands = ['!how-to-dispose', '!co2-cloth-mask', '!co2-n95-mask', '!sustainable-masks', '!mask-recycling', '!uiuc-mask-program']
+    bot_commands = '\n'.join(bot_commands)
+
+    msg = 'Hi {}, welcome to my Discord server!\nHere are a list of commands I can respond to:\n>>> {}'.format(member.name, bot_commands)
+
     await member.create_dm()
     await member.dm_channel.send(
-        f'Hi {member.name}, welcome to my Discord server!'
+        msg
     )
 
 
